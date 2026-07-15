@@ -6,501 +6,629 @@
   <title>Calculadora de Depreciación Ross-Heidecke</title>
   <style>
     :root {
-      --navy: #082f49;
-      --navy-dark: #061f2f;
-      --blue: #0f4c81;
-      --blue-soft: #dceefc;
-      --slate: #5b6b7a;
-      --light: #f4f7fb;
-      --white: #ffffff;
-      --danger: #c13a3a;
-      --success: #1f8f55;
-      --border: #d5dde8;
-      --shadow: 0 18px 45px rgba(8, 47, 73, 0.12);
+      --navy: #0f2a4a;
+      --navy-2: #173d63;
+      --blue: #1f5ea8;
+      --blue-soft: #e8f1fb;
+      --gray: #f4f6f8;
+      --gray-2: #d9e2ea;
+      --text: #22344a;
+      --muted: #617183;
+      --danger: #c84b4b;
+      --success: #1d8f5d;
+      --shadow: 0 20px 45px rgba(9, 31, 58, 0.12);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, var(--navy) 0%, #0d3756 45%, #144c71 100%);
-      color: var(--navy-dark);
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, #f8fbff 0%, #eef4fb 100%);
       min-height: 100vh;
       padding: 24px;
     }
 
-    .app-shell {
-      max-width: 1120px;
+    .wrap {
+      max-width: 1180px;
       margin: 0 auto;
-      display: grid;
-      gap: 24px;
+      background: rgba(255,255,255,0.96);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(15,42,74,0.08);
     }
 
     .hero {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 24px;
-      padding: 28px 32px;
-      box-shadow: var(--shadow);
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+      color: white;
+      padding: 32px 32px 24px;
+    }
+
+    .hero-top {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 16px;
       flex-wrap: wrap;
+      margin-bottom: 14px;
     }
 
     .hero h1 {
-      margin: 0 0 6px;
-      color: var(--navy);
-      font-size: clamp(1.4rem, 2vw, 2rem);
+      margin: 0 0 8px;
+      font-size: clamp(1.6rem, 2.2vw, 2.3rem);
+      font-weight: 700;
       letter-spacing: -0.02em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      font-size: 0.9rem;
+      font-weight: 600;
+      backdrop-filter: blur(8px);
     }
 
     .hero p {
       margin: 0;
-      color: var(--slate);
-      max-width: 680px;
+      max-width: 760px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: 24px;
+      padding: 28px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--gray-2);
+      border-radius: 18px;
+      padding: 24px;
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+      color: var(--navy);
+    }
+
+    .panel .subtle {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
       line-height: 1.5;
     }
 
-    .pill {
-      background: linear-gradient(135deg, var(--navy), var(--blue));
-      color: var(--white);
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 24px;
-    }
-
-    .card {
-      background: var(--white);
-      border-radius: 24px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .card-header {
-      padding: 22px 24px 0;
-    }
-
-    .card-header h2 {
-      margin: 0 0 6px;
-      color: var(--navy);
-      font-size: 1.15rem;
-    }
-
-    .card-header p {
-      margin: 0;
-      color: var(--slate);
-      font-size: 0.97rem;
-      line-height: 1.45;
-    }
-
-    form {
-      padding: 20px 24px 24px;
+    .form-grid {
       display: grid;
       gap: 16px;
     }
 
     .field {
-      display: grid;
-      gap: 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     label {
       font-weight: 600;
-      color: var(--navy-dark);
+      color: var(--navy);
       font-size: 0.95rem;
     }
 
     input, select {
       width: 100%;
       padding: 12px 14px;
+      border: 1px solid var(--gray-2);
       border-radius: 12px;
-      border: 1px solid var(--border);
+      outline: none;
       font-size: 1rem;
-      color: var(--navy-dark);
-      background: var(--light);
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: var(--gray);
+      color: var(--text);
     }
 
     input:focus, select:focus {
-      outline: none;
       border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.15);
+      box-shadow: 0 0 0 4px rgba(31,94,168,0.15);
+      background: white;
     }
 
     .actions {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     button {
       border: none;
       border-radius: 999px;
       padding: 12px 18px;
+      font-size: 0.98rem;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
     }
 
-    button:hover {
-      transform: translateY(-1px);
+    button:hover { transform: translateY(-1px); }
+
+    .btn-calc {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--navy) 100%);
+      color: white;
+      box-shadow: 0 10px 22px rgba(31,94,168,0.24);
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--navy), var(--blue));
-      color: var(--white);
-      box-shadow: 0 10px 18px rgba(8, 47, 73, 0.2);
-    }
-
-    .btn-secondary {
-      background: var(--light);
+    .btn-reset {
+      background: var(--gray);
       color: var(--navy);
-      border: 1px solid var(--border);
+      border: 1px solid var(--gray-2);
     }
 
-    .error {
-      display: none;
-      background: #fff3f3;
-      border: 1px solid #f1c1c1;
-      color: var(--danger);
+    .btn-export {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 10px 22px rgba(29,143,93,0.25);
+    }
+
+    .message {
+      margin-top: 16px;
       padding: 12px 14px;
       border-radius: 12px;
       font-size: 0.95rem;
+      display: none;
     }
 
-    .error.show {
+    .message.error {
       display: block;
+      background: #fff2f2;
+      color: var(--danger);
+      border: 1px solid #f4d0d0;
     }
 
-    .results {
-      padding: 20px 24px 24px;
-      display: grid;
-      gap: 16px;
-    }
-
-    .results-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .results-head h3 {
-      margin: 0;
-      color: var(--navy);
-      font-size: 1.1rem;
-    }
-
-    .status-badge {
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-weight: 700;
+    .message.success {
+      display: block;
+      background: #f1fcf7;
       color: var(--success);
-      background: #ebf8f1;
-      border: 1px solid #cfead9;
-      font-size: 0.9rem;
+      border: 1px solid #ccebdc;
     }
 
-    .metrics {
+    .metric-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
-    .metric {
-      background: var(--light);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
+    .metric-card {
+      padding: 14px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #fbfdff 0%, var(--blue-soft) 100%);
+      border: 1px solid #dce9f6;
     }
 
-    .metric .label {
-      font-size: 0.9rem;
-      color: var(--slate);
+    .metric-card .label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       margin-bottom: 6px;
     }
 
-    .metric .value {
+    .metric-card .value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--navy);
+      word-break: break-word;
+    }
+
+    .results {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .result-card {
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #fbfdff 0%, var(--blue-soft) 100%);
+      border: 1px solid #dce9f6;
+      border-radius: 14px;
+    }
+
+    .result-card .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .result-card .value {
       font-size: 1.2rem;
       font-weight: 700;
       color: var(--navy);
       word-break: break-word;
     }
 
-    .metric .value.small {
+    .chart-card {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--gray);
+      border: 1px solid var(--gray-2);
+    }
+
+    .chart-card h3 {
+      margin: 0 0 10px;
       font-size: 1rem;
-      color: var(--blue);
+      color: var(--navy);
     }
 
-    .summary {
-      background: linear-gradient(135deg, var(--blue-soft), #f6fbff);
-      border-radius: 18px;
-      padding: 16px 18px;
-      border: 1px solid #cfe3f4;
-      color: var(--navy-dark);
-      line-height: 1.55;
+    .chart-card svg {
+      width: 100%;
+      height: 220px;
+      display: block;
     }
 
-    .note {
-      font-size: 0.94rem;
-      color: var(--slate);
-      line-height: 1.5;
-      margin: 0;
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.95rem;
     }
 
-    @media (max-width: 860px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
+    .results-table th, .results-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-2);
+    }
+
+    .results-table th {
+      color: var(--navy);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #f8fbff;
+    }
+
+    .formula-box {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--gray);
+      border: 1px solid var(--gray-2);
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .formula-box strong { color: var(--navy); }
+
+    @media (max-width: 960px) {
+      .content { grid-template-columns: 1fr; }
+      .metric-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 560px) {
-      body {
-        padding: 14px;
-      }
+      body { padding: 14px; }
+      .hero, .content { padding: 20px; }
+      .actions { flex-direction: column; }
+      button { width: 100%; }
+    }
 
-      .hero,
-      .card-header,
-      form,
-      .results {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-
-      .metrics {
-        grid-template-columns: 1fr;
-      }
+    @media print {
+      body { padding: 0; background: white; }
+      .wrap { box-shadow: none; border: none; border-radius: 0; }
+      .hero { background: #0f2a4a !important; }
+      .btn-export, .btn-reset, .btn-calc, .badge { display: none !important; }
+      .content { display: block; padding: 0 20px 20px; }
+      .panel { break-inside: avoid; margin-bottom: 16px; }
+      .chart-card, .formula-box { background: white; }
     }
   </style>
 </head>
 <body>
-  <main class="app-shell">
-    <section class="hero">
-      <div>
-        <h1>Calculadora de Depreciación Profesional</h1>
-        <p>Modelo de valoración inmobiliaria basado en el método Ross-Heidecke, con factores de depreciación y estado de conservación aplicados de forma precisa y ejecutiva.</p>
-      </div>
-      <div class="pill">Método Ross-Heidecke</div>
-    </section>
-
-    <section class="grid">
-      <article class="card">
-        <div class="card-header">
-          <h2>Datos de valoración</h2>
-          <p>Ingrese los valores base para obtener la depreciación acumulada y el valor actual neto del inmueble.</p>
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Calculadora de Depreciación Profesional</h1>
+          <p>Evaluación ejecutiva de activos inmuebles bajo el método Ross-Heidecke, con criterios de conservación internacional y resultados listos para uso técnico y financiero.</p>
         </div>
-        <form id="depreciation-form">
-          <div class="field">
-            <label for="vrn">Valor de Reproducción Nuevo (VRN)</label>
-            <input id="vrn" name="vrn" type="number" min="0.01" step="0.01" placeholder="Ej. 1500000" required />
-          </div>
+        <div class="badge">📊 Reporte ejecutivo</div>
+      </div>
+    </div>
 
-          <div class="field">
-            <label for="edad">Edad actual del inmueble (e)</label>
-            <input id="edad" name="edad" type="number" min="0" step="0.01" placeholder="Ej. 12" required />
-          </div>
+    <div class="content">
+      <section class="panel">
+        <h2>Datos de entrada</h2>
+        <p class="subtle">Complete los valores para obtener el reporte ejecutivo con factores, montos y gráfico comparativo.</p>
 
-          <div class="field">
-            <label for="vida">Vida útil total estimada (V)</label>
-            <input id="vida" name="vida" type="number" min="0.01" step="0.01" placeholder="Ej. 40" required />
-          </div>
+        <form id="depreciationForm" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="vrn">Valor de Reproducción Nuevo (VRN)</label>
+              <input id="vrn" name="vrn" type="number" min="0.01" step="0.01" placeholder="Ej. 1250500" required />
+            </div>
 
-          <div class="field">
-            <label for="estado">Estado de conservación</label>
-            <select id="estado" name="estado">
-              <option value="0.00">Grado 1 - Nuevo / Excelente estado</option>
-              <option value="0.03">Grado 2 - Regular / Conservación normal</option>
-              <option value="0.08">Grado 3 - Reparaciones sencillas / Mantenimiento menor</option>
-              <option value="0.18">Grado 4 - Reparaciones importantes / Desatendido</option>
-              <option value="0.50">Grado 5 - Demolición / Inservible</option>
-            </select>
-          </div>
+            <div class="field">
+              <label for="edad">Edad actual del inmueble (e)</label>
+              <input id="edad" name="edad" type="number" min="0" step="1" placeholder="Ej. 12" required />
+            </div>
 
-          <div class="error" id="error-message" role="alert"></div>
+            <div class="field">
+              <label for="vida">Vida útil total estimada (V)</label>
+              <input id="vida" name="vida" type="number" min="1" step="1" placeholder="Ej. 40" required />
+            </div>
+
+            <div class="field">
+              <label for="estado">Estado de conservación</label>
+              <select id="estado" name="estado">
+                <option value="0">Grado 1 - Nuevo / Excelente estado</option>
+                <option value="0.03">Grado 2 - Regular / Conservación normal</option>
+                <option value="0.08">Grado 3 - Reparaciones sencillas / Necesita mantenimiento menor</option>
+                <option value="0.18">Grado 4 - Reparaciones importantes / Desatendido</option>
+                <option value="0.5">Grado 5 - Demolición / Inservible</option>
+              </select>
+            </div>
+          </div>
 
           <div class="actions">
-            <button class="btn-primary" type="button" id="btn-calcular">Calcular</button>
-            <button class="btn-secondary" type="button" id="btn-limpiar">Limpiar</button>
+            <button class="btn-calc" type="submit">Calcular</button>
+            <button class="btn-reset" type="reset">Limpiar</button>
+            <button class="btn-export" type="button" id="exportBtn">Exportar a PDF</button>
           </div>
+
+          <div id="message" class="message" role="alert"></div>
         </form>
-      </article>
+      </section>
 
-      <article class="card">
-        <div class="card-header">
-          <h2>Resultados del análisis</h2>
-          <p>La salida muestra el factor Ross, el coeficiente de Heidecke y el resultado económico final.</p>
+      <section class="panel">
+        <h2>Resultados ejecutivos</h2>
+        <p class="subtle">Visualice de forma clara los factores, el valor depreciado y la distribución del activo en un formato listo para reporte.</p>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <span class="label">Factor total</span>
+            <div id="metricTotal" class="value">—</div>
+          </div>
+          <div class="metric-card">
+            <span class="label">Depreciación</span>
+            <div id="metricDep" class="value">—</div>
+          </div>
+          <div class="metric-card">
+            <span class="label">Valor actual</span>
+            <div id="metricValue" class="value">—</div>
+          </div>
         </div>
+
         <div class="results">
-          <div class="results-head">
-            <h3>Resumen ejecutivo</h3>
-            <span class="status-badge" id="status-badge">Esperando datos</span>
+          <div class="result-card">
+            <span class="label">Factor de Ross (R)</span>
+            <div id="factorRoss" class="value">—</div>
           </div>
-
-          <div class="metrics">
-            <div class="metric">
-              <div class="label">Factor Ross (R)</div>
-              <div class="value small" id="factor-ross">0.0000</div>
-            </div>
-            <div class="metric">
-              <div class="label">Coeficiente Heidecke (p)</div>
-              <div class="value small" id="factor-heidecke">0.0000</div>
-            </div>
-            <div class="metric">
-              <div class="label">Factor Total Ross-Heidecke</div>
-              <div class="value" id="factor-total">0.0000</div>
-            </div>
-            <div class="metric">
-              <div class="label">Depreciación acumulada</div>
-              <div class="value" id="depreciacion">$0.00</div>
-            </div>
+          <div class="result-card">
+            <span class="label">Coeficiente Heidecke (p)</span>
+            <div id="factorHeidecke" class="value">—</div>
           </div>
-
-          <div class="summary">
-            <strong>Valor actual neto depreciado:</strong> <span id="valor-actual">$0.00</span><br />
-            <strong>Estado seleccionado:</strong> <span id="estado-label">Grado 1 - Nuevo / Excelente estado</span>
+          <div class="result-card">
+            <span class="label">Factor Total Ross-Heidecke (F_total)</span>
+            <div id="factorTotal" class="value">—</div>
           </div>
-
-          <p class="note">Los factores se muestran con precisión de 4 decimales y los montos con formato monetario profesional.</p>
+          <div class="result-card">
+            <span class="label">Depreciación acumulada</span>
+            <div id="depreciacion" class="value">—</div>
+          </div>
+          <div class="result-card">
+            <span class="label">Valor actual neto depreciado</span>
+            <div id="valorActual" class="value">—</div>
+          </div>
         </div>
-      </article>
-    </section>
-  </main>
+
+        <div class="chart-card">
+          <h3>Distribución del valor</h3>
+          <svg id="chartSvg" viewBox="0 0 320 220" role="img" aria-label="Gráfico de distribución del valor"></svg>
+        </div>
+
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTableBody">
+            <tr><td colspan="2">Aún no hay resultados.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="formula-box">
+          <strong>Fórmula aplicada:</strong><br />
+          R = 0.5 × ((e / V) + (e² / V²))<br />
+          F_total = R + (p × (1 − R))<br />
+          Depreciación acumulada = VRN × F_total<br />
+          Valor actual neto = VRN × (1 − F_total)
+        </div>
+      </section>
+    </div>
+  </div>
 
   <script>
-    const form = document.getElementById('depreciation-form');
-    const btnCalcular = document.getElementById('btn-calcular');
-    const btnLimpiar = document.getElementById('btn-limpiar');
-    const errorBox = document.getElementById('error-message');
-    const statusBadge = document.getElementById('status-badge');
+    const form = document.getElementById('depreciationForm');
+    const exportBtn = document.getElementById('exportBtn');
+    const messageBox = document.getElementById('message');
+    const chartSvg = document.getElementById('chartSvg');
+    const resultsTableBody = document.getElementById('resultsTableBody');
 
     const elements = {
-      ross: document.getElementById('factor-ross'),
-      heidecke: document.getElementById('factor-heidecke'),
-      total: document.getElementById('factor-total'),
+      ross: document.getElementById('factorRoss'),
+      heidecke: document.getElementById('factorHeidecke'),
+      total: document.getElementById('factorTotal'),
       depreciacion: document.getElementById('depreciacion'),
-      valorActual: document.getElementById('valor-actual'),
-      estadoLabel: document.getElementById('estado-label')
+      valorActual: document.getElementById('valorActual'),
+      metricTotal: document.getElementById('metricTotal'),
+      metricDep: document.getElementById('metricDep'),
+      metricValue: document.getElementById('metricValue')
     };
 
-    const estadoSelect = document.getElementById('estado');
-
-    function formatCurrency(value) {
-      return '$' + Number(value).toLocaleString('en-US', {
+    function formatMoney(value) {
+      return new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
-      });
+      }).format(value);
     }
 
-    function formatDecimal(value) {
+    function formatFactor(value) {
       return Number(value).toFixed(4);
     }
 
-    function showError(message) {
-      errorBox.textContent = message;
-      errorBox.classList.add('show');
-      statusBadge.textContent = 'Error de validación';
-      statusBadge.style.color = '#c13a3a';
-      statusBadge.style.background = '#fff3f3';
-      statusBadge.style.borderColor = '#f1c1c1';
+    function formatPercent(value) {
+      return `${(value * 100).toFixed(2)}%`;
     }
 
-    function clearError() {
-      errorBox.textContent = '';
-      errorBox.classList.remove('show');
+    function showMessage(text, type) {
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+    }
+
+    function clearMessage() {
+      messageBox.textContent = '';
+      messageBox.className = 'message';
     }
 
     function resetResults() {
-      elements.ross.textContent = '0.0000';
-      elements.heidecke.textContent = '0.0000';
-      elements.total.textContent = '0.0000';
-      elements.depreciacion.textContent = '$0.00';
-      elements.valorActual.textContent = '$0.00';
-      elements.estadoLabel.textContent = 'Grado 1 - Nuevo / Excelente estado';
-      statusBadge.textContent = 'Esperando datos';
-      statusBadge.style.color = '#1f8f55';
-      statusBadge.style.background = '#ebf8f1';
-      statusBadge.style.borderColor = '#cfead9';
+      elements.ross.textContent = '—';
+      elements.heidecke.textContent = '—';
+      elements.total.textContent = '—';
+      elements.depreciacion.textContent = '—';
+      elements.valorActual.textContent = '—';
+      elements.metricTotal.textContent = '—';
+      elements.metricDep.textContent = '—';
+      elements.metricValue.textContent = '—';
+      chartSvg.innerHTML = '';
+      resultsTableBody.innerHTML = '<tr><td colspan="2">Aún no hay resultados.</td></tr>';
     }
 
-    function calculateDepreciation() {
-      clearError();
+    function renderChart(depreciacionPct, valorActualPct) {
+      const width = 320;
+      const height = 220;
+      const chartHeight = 130;
+      const barWidth = 70;
+      const gap = 60;
+      const left = 40;
+      const top = 40;
+      const max = 100;
 
-      const vrnValue = parseFloat(document.getElementById('vrn').value);
-      const edadValue = parseFloat(document.getElementById('edad').value);
-      const vidaValue = parseFloat(document.getElementById('vida').value);
-      const selectedEstado = estadoSelect.options[estadoSelect.selectedIndex];
-      const pValue = parseFloat(selectedEstado.value);
+      const bars = [
+        { label: 'Depreciación', value: depreciacionPct, color: '#1f5ea8' },
+        { label: 'Valor actual', value: valorActualPct, color: '#1d8f5d' }
+      ];
 
-      if (Number.isNaN(vrnValue) || Number.isNaN(edadValue) || Number.isNaN(vidaValue)) {
-        showError('Complete todos los campos numéricos para continuar.');
-        return;
-      }
+      chartSvg.innerHTML = `
+        <rect x="0" y="0" width="${width}" height="${height}" rx="18" fill="#ffffff"></rect>
+        <line x1="28" y1="${top + chartHeight}" x2="${width - 20}" y2="${top + chartHeight}" stroke="#cbd5e1" stroke-width="1"></line>
+        <line x1="28" y1="${top}" x2="28" y2="${top + chartHeight}" stroke="#cbd5e1" stroke-width="1"></line>
+      `;
 
-      if (vrnValue <= 0) {
-        showError('El Valor de Reproducción Nuevo debe ser mayor a 0.');
-        return;
-      }
+      const baseY = top + chartHeight;
+      bars.forEach((bar, index) => {
+        const x = left + index * (barWidth + gap);
+        const h = (bar.value / max) * chartHeight;
+        const y = baseY - h;
 
-      if (edadValue < 0) {
-        showError('La edad actual no puede ser negativa.');
-        return;
-      }
-
-      if (vidaValue <= 0) {
-        showError('La vida útil total debe ser mayor a 0.');
-        return;
-      }
-
-      if (edadValue >= vidaValue) {
-        showError('La edad actual debe ser menor que la vida útil total estimada.');
-        return;
-      }
-
-      const R = 0.5 * ((edadValue / vidaValue) + ((edadValue * edadValue) / (vidaValue * vidaValue)));
-      const F_total = R + (pValue * (1 - R));
-      const depreciacionAcumulada = vrnValue * F_total;
-      const valorActualNeto = vrnValue * (1 - F_total);
-
-      elements.ross.textContent = formatDecimal(R);
-      elements.heidecke.textContent = formatDecimal(pValue);
-      elements.total.textContent = formatDecimal(F_total);
-      elements.depreciacion.textContent = formatCurrency(depreciacionAcumulada);
-      elements.valorActual.textContent = formatCurrency(valorActualNeto);
-      elements.estadoLabel.textContent = selectedEstado.textContent;
-
-      statusBadge.textContent = 'Cálculo listo';
-      statusBadge.style.color = '#1f8f55';
-      statusBadge.style.background = '#ebf8f1';
-      statusBadge.style.borderColor = '#cfead9';
+        chartSvg.innerHTML += `
+          <rect x="${x}" y="${y}" width="${barWidth}" height="${h}" rx="10" fill="${bar.color}"></rect>
+          <text x="${x + barWidth / 2}" y="${baseY + 24}" text-anchor="middle" fill="#617183" font-size="12">${bar.label}</text>
+          <text x="${x + barWidth / 2}" y="${y - 8}" text-anchor="middle" fill="#0f2a4a" font-size="12">${formatPercent(bar.value / 100)}</text>
+        `;
+      });
     }
 
-    btnCalcular.addEventListener('click', calculateDepreciation);
-    btnLimpiar.addEventListener('click', function () {
-      form.reset();
-      estadoSelect.value = '0.00';
-      clearError();
-      resetResults();
+    function renderTable(factorTotal, depreciation, valueActual, percentDep, percentValue) {
+      resultsTableBody.innerHTML = `
+        <tr><td>Factor total Ross-Heidecke</td><td>${formatFactor(factorTotal)}</td></tr>
+        <tr><td>Depreciación acumulada</td><td>${formatMoney(depreciation)}</td></tr>
+        <tr><td>Valor actual neto</td><td>${formatMoney(valueActual)}</td></tr>
+        <tr><td>Porcentaje depreciado</td><td>${formatPercent(percentDep)}</td></tr>
+        <tr><td>Porcentaje de valor remanente</td><td>${formatPercent(percentValue)}</td></tr>
+      `;
+    }
+
+    exportBtn.addEventListener('click', function () {
+      window.print();
     });
 
     form.addEventListener('submit', function (event) {
       event.preventDefault();
-      calculateDepreciation();
+      clearMessage();
+
+      const vrn = Number(document.getElementById('vrn').value);
+      const edad = Number(document.getElementById('edad').value);
+      const vida = Number(document.getElementById('vida').value);
+      const p = Number(document.getElementById('estado').value);
+
+      if (!Number.isFinite(vrn) || vrn <= 0) {
+        showMessage('El Valor de Reproducción Nuevo debe ser mayor a 0.', 'error');
+        resetResults();
+        return;
+      }
+
+      if (!Number.isFinite(edad) || edad < 0) {
+        showMessage('La edad actual debe ser un valor mayor o igual a 0.', 'error');
+        resetResults();
+        return;
+      }
+
+      if (!Number.isFinite(vida) || vida <= 0) {
+        showMessage('La vida útil total debe ser mayor que 0.', 'error');
+        resetResults();
+        return;
+      }
+
+      if (edad >= vida) {
+        showMessage('La edad actual debe ser menor que la vida útil total estimada.', 'error');
+        resetResults();
+        return;
+      }
+
+      const R = 0.5 * ((edad / vida) + ((edad * edad) / (vida * vida)));
+      const F_total = R + (p * (1 - R));
+      const depreciacion = vrn * F_total;
+      const valorActual = vrn * (1 - F_total);
+      const percentDep = F_total;
+      const percentValue = 1 - F_total;
+
+      elements.ross.textContent = formatFactor(R);
+      elements.heidecke.textContent = formatFactor(p);
+      elements.total.textContent = formatFactor(F_total);
+      elements.depreciacion.textContent = formatMoney(depreciacion);
+      elements.valorActual.textContent = formatMoney(valorActual);
+      elements.metricTotal.textContent = formatFactor(F_total);
+      elements.metricDep.textContent = formatMoney(depreciacion);
+      elements.metricValue.textContent = formatMoney(valorActual);
+
+      renderChart(percentDep * 100, percentValue * 100);
+      renderTable(F_total, depreciacion, valorActual, percentDep, percentValue);
+      showMessage('Cálculo realizado correctamente.', 'success');
     });
 
-    resetResults();
+    form.addEventListener('reset', function () {
+      clearMessage();
+      resetResults();
+    });
   </script>
 </body>
 </html>
